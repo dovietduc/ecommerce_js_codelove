@@ -5,6 +5,7 @@ const inputEmailSelector = document.querySelector('.email');
 const inputPasswordSelector = document.querySelector('.password');
 
 const inputAllSelector = document.querySelectorAll('.form-group input');
+const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 
 
@@ -28,18 +29,12 @@ function handleSignUpClick(event) {
             divMessageSelector.textContent = message;
         } else if(name === 'email') {
             // validate email tối thiểu 3 kí tự
-            let minLength = inputSelector.getAttribute('min_length');
-            if(valueInput.length < minLength) {
-                let message = name + ' tối thiểu ' + minLength + ' kí tự';
-                divMessageSelector.textContent = message;
-            }
+            minLengthValidate(inputSelector, name);
+            // validate email
+            emailRegexValidate(inputSelector, name);
         } else if(name === 'password') {
             // validate password tối thiểu 8 kí tự
-            let minLength = inputSelector.getAttribute('min_length');
-            if(valueInput.length < minLength) {
-                let message = name + ' tối thiểu ' + minLength + ' kí tự';
-                divMessageSelector.textContent = message;
-            }
+            minLengthValidate(inputSelector, name, 'password cần phải có tối thiểu 8 kí tự cho bảo mật');
         }
       
     }
@@ -47,7 +42,38 @@ function handleSignUpClick(event) {
 
 }
 
+// rule validate email
+function emailRegexValidate(inputSelector, name, message) {
+    let valueInput = inputSelector.value;
+    let isValidRegex = regexEmail.test(valueInput);
+    let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
+    if(isValidRegex === false) {
+        inputSelector.classList.add('error');
+        let messageError = name + ' không phải định dạng email hợp lệ';
+        if(message) {
+            messageError = message;
+        }
+        
+        divMessageSelector.textContent = messageError;
+    }
+}
 
+// rule validate min-length
+function minLengthValidate(inputSelector, name, message) {
+    let valueInput = inputSelector.value;
+    let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
+    // optional
+    let minLength = inputSelector.getAttribute('min_length');
+
+    if(valueInput.length < minLength) {
+        let messageError = name + ' tối thiểu ' + minLength + ' kí tự';
+        if(message) {
+            messageError = message;
+        }
+
+        divMessageSelector.textContent = messageError;
+    }
+}
 
 
 
