@@ -17,18 +17,30 @@ function handleSignUpClick(event) {
         let inputSelector = inputAllSelector[i];
         let valueInput = inputSelector.value;
         let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
+        let name = inputSelector.name;
 
         // validate not empty
         if(valueInput === '') {
             // thêm viền đỏ cho input
             inputSelector.classList.add('error');
             // hiển thị message lỗi
-            let name = inputSelector.name;
             let message = name + ' không được để trống';
             divMessageSelector.textContent = message;
+        } else if(name === 'email') {
+            // validate email tối thiểu 3 kí tự
+            let minLength = inputSelector.getAttribute('min_length');
+            if(valueInput.length < minLength) {
+                let message = name + ' tối thiểu ' + minLength + ' kí tự';
+                divMessageSelector.textContent = message;
+            }
+        } else if(name === 'password') {
+            // validate password tối thiểu 8 kí tự
+            let minLength = inputSelector.getAttribute('min_length');
+            if(valueInput.length < minLength) {
+                let message = name + ' tối thiểu ' + minLength + ' kí tự';
+                divMessageSelector.textContent = message;
+            }
         }
-        
-
       
     }
 
