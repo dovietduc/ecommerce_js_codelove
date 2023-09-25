@@ -62,18 +62,27 @@ function handleSignUpClick(event) {
         } else {
             let isRequireValid = requireValidate(inputSelector, name);
             let isMinlengthValid;
+            let isCompareValid;
             // validate password tối thiểu 8 kí tự
             if (isRequireValid) {
                 isMinlengthValid = minLengthValidate(inputSelector, name, 'confirm password cần phải có tối thiểu 8 kí tự cho bảo mật');
             }
-
-            // check success
+            // validate compare with password
             if(isRequireValid && isMinlengthValid) {
+                isCompareValid = compareFieldsValidate(inputSelector, name);  
+            }
+            // check success
+            if(isRequireValid && isMinlengthValid && isCompareValid) {
                 showSuccess(inputSelector, divMessageSelector);
             }
         }
       
     }
+
+    // kiểm tra không có ô input nào có lỗi validate
+    // 1. lưu user vào localStorage
+    // 2. redirect đến màn hình login
+    
 
 
 }
@@ -83,6 +92,26 @@ function handleSignUpClick(event) {
 function showSuccess(inputSelector, divMessageSelector) {
     inputSelector.classList.remove('error');
     divMessageSelector.textContent = '';
+}
+
+// rule compare data
+function compareFieldsValidate(inputSelector, name, message) {
+    let isValid = true;
+    let valueInput = inputSelector.value;
+    let compareSelectorClass = inputSelector.getAttribute('selector_compare');
+    let compareSelector = document.querySelector('.' + compareSelectorClass);
+    let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
+    if(compareSelector.value !== valueInput) {
+        isValid = false;
+        inputSelector.classList.add('error');
+        // hiển thị message lỗi
+        let messageError = 'dữ liệu nhập ở ' + name + ' không trùng với dữ liệu nhập ở ' + compareSelectorClass;
+        if(message) {
+            messageError = message;
+        }
+        divMessageSelector.textContent = messageError;
+    }
+    return isValid;
 }
 
 // rule require validate
