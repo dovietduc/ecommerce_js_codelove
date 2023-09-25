@@ -7,6 +7,8 @@ const inputPasswordSelector = document.querySelector('.password');
 const inputAllSelector = document.querySelectorAll('.form-group input');
 const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
+// validate cho từng field một (từng ô input một)
+// Trong từng ô input check sẽ đính kèm các rule(quy tắc validate) của nó
 
 
 // 2. function xử lí sự kiện + chạy lần đầu khi load
@@ -21,29 +23,42 @@ function handleSignUpClick(event) {
         let name = inputSelector.name;
 
         // validate not empty
-        if(valueInput === '') {
-            // thêm viền đỏ cho input
-            inputSelector.classList.add('error');
-            // hiển thị message lỗi
-            let message = name + ' không được để trống';
-            divMessageSelector.textContent = message;
+        if(name === 'name') {
+            let isRequireValid = requireValidate(inputSelector, name);
+            // check success
+            if(isRequireValid) {
+                showSuccess(inputSelector, divMessageSelector);
+            }
         } else if(name === 'email') {
-            // validate email tối thiểu 3 kí tự
-            let isMinlengthValid = minLengthValidate(inputSelector, name);
-            // validate email
+            let isMinlengthValid;
             let isEmailRegexValid;
-            if(isMinlengthValid) {
+            let isRequireValid = requireValidate(inputSelector, name);
+            // validate email tối thiểu 3 kí tự
+            if(isRequireValid) {
+                isMinlengthValid = minLengthValidate(inputSelector, name);
+            }
+            // validate email
+            if(isRequireValid && isMinlengthValid) {
                 isEmailRegexValid = emailRegexValidate(inputSelector, name);
             }
-            // validate khác
+          
             // check validate success
-            if(isMinlengthValid && isEmailRegexValid) {
+            if(isRequireValid && isMinlengthValid && isEmailRegexValid) {
                 showSuccess(inputSelector, divMessageSelector);
             }
             
         } else if(name === 'password') {
+            let isRequireValid = requireValidate(inputSelector, name);
+            let isMinlengthValid;
             // validate password tối thiểu 8 kí tự
-            let isMinlengthValid = minLengthValidate(inputSelector, name, 'password cần phải có tối thiểu 8 kí tự cho bảo mật');
+            if (isRequireValid) {
+                isMinlengthValid = minLengthValidate(inputSelector, name, 'password cần phải có tối thiểu 8 kí tự cho bảo mật');
+            }
+
+            // check success
+            if(isRequireValid && isMinlengthValid) {
+                showSuccess(inputSelector, divMessageSelector);
+            }
         } else {
             showSuccess(inputSelector, divMessageSelector);
         }
@@ -53,11 +68,31 @@ function handleSignUpClick(event) {
 
 }
 
+
+
 function showSuccess(inputSelector, divMessageSelector) {
     inputSelector.classList.remove('error');
     divMessageSelector.textContent = '';
 }
 
+// rule require validate
+function requireValidate(inputSelector, name, message) {
+    let isValid = true;
+    let valueInput = inputSelector.value;
+    let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
+    if(valueInput === '') {
+        isValid = false;
+        // thêm viền đỏ cho input
+        inputSelector.classList.add('error');
+        // hiển thị message lỗi
+        let messageError = name + ' không được để trống';
+        if(message) {
+            messageError = message;
+        }
+        divMessageSelector.textContent = messageError;
+    }
+    return isValid;
+}
 
 // rule validate email
 function emailRegexValidate(inputSelector, name, message) {
