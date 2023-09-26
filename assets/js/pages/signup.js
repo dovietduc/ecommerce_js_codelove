@@ -31,6 +31,7 @@ function handleSignUpClick(event) {
             if(isRequireValid) {
                 showSuccess(inputSelector, divMessageSelector);
             }
+            
         } else if(name === 'email') {
             let isMinlengthValid;
             let isEmailRegexValid;
