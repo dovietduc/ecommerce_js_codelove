@@ -2,73 +2,100 @@
 const btnSignUpSelector = document.querySelector('.btn-signup');
 const inputAllSelector = document.querySelectorAll('.form-group input');
 const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const errorMessageAll = document.querySelectorAll('.error_message');
 
 // validate cho từng field một (từng ô input một)
 // Trong từng ô input check sẽ đính kèm các rule(quy tắc validate) của nó
 
 
-// 2. function xử lí sự kiện + chạy lần đầu khi load
+// =============== Start Listener Function ===============
 function handleSignUpClick(event) {
     event.preventDefault();
     // 1. Thực hiện validate
     for(let i = 0; i < inputAllSelector.length; i++) {
 
         let inputSelector = inputAllSelector[i];
-        let valueInput = inputSelector.value;
-        let divMessageSelector = inputSelector.closest('.form-group').querySelector('.error_message');
         let name = inputSelector.name;
 
         // validate not empty
         if(name === 'name') {
-            // require
-            if(!require(inputSelector)) {
-                showError(inputSelector, 'Tên không được để trống');
-            } else {
-                // show success
-                showSuccess(inputSelector);
-            }
+            validateName(inputSelector);            
         } else if(name === 'email') {
-            if(!require(inputSelector)) {
-                showError(inputSelector, 'email không được để trống');
-            } else if(!minlength(inputSelector)) {
-                showError(inputSelector, `email tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
-            } else if(!emailRegex(inputSelector)) {
-                showError(inputSelector, 'email khồng đúng định dạng');
-            } else {
-                showSuccess(inputSelector);
-            }
+            validateEmail(inputSelector);
         } else if(name === 'password') {
-            if(!require(inputSelector)) {
-                showError(inputSelector, 'password không được để trống');
-            } else if(!minlength(inputSelector)) {
-                showError(inputSelector, `password tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
-            } else {
-                showSuccess(inputSelector);
-            }
+            validatePassword(inputSelector);
         } else {
-            if(!require(inputSelector)) {
-                showError(inputSelector, 'confirm password không được để trống');
-            } else if(!minlength(inputSelector)) {
-                showError(inputSelector, `confirm password tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
-            } else if(!comparePass(inputSelector)) {
-                showError(inputSelector, 'confirm password không trùng với password');
-            } else {
-                showSuccess(inputSelector);
-            }
+            validateConfirmPassword(inputSelector)
         }
       
     }
 
     // kiểm tra không có ô input nào có lỗi validate
-    // 1. lưu user vào localStorage
-    // 2. redirect đến màn hình login
 
 
 }
 
-// rule require
-// output: return true or false
+// hàm chỉ chạy khi người dùng nhập value có sự thay đổi
+function handleChangeValue(event) {
+    let inputSelector = event.target;
+    let nameInput = inputSelector.name;
+    if(nameInput === 'name') {
+        validateName(inputSelector);    
+    } else if(nameInput === 'email') {
+        validateEmail(inputSelector);
+    } else if(nameInput === 'password') {
+        validatePassword(inputSelector)
+    } else {
+        validateConfirmPassword(inputSelector);
+    }
+}
+// =============== End Listener Function ===============
+
+
+// =============== Start Validate Input Function ===============
+function validateName(inputSelector) {
+    // require
+    if(!require(inputSelector)) {
+        showError(inputSelector, 'Tên không được để trống');
+    } else {
+        // show success
+        showSuccess(inputSelector);
+    }
+}
+function validateEmail(inputSelector) {
+    if(!require(inputSelector)) {
+        showError(inputSelector, 'email không được để trống');
+    } else if(!minlength(inputSelector)) {
+        showError(inputSelector, `email tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
+    } else if(!emailRegex(inputSelector)) {
+        showError(inputSelector, 'email khồng đúng định dạng');
+    } else {
+        showSuccess(inputSelector);
+    }
+}
+function validatePassword(inputSelector) {
+    if(!require(inputSelector)) {
+        showError(inputSelector, 'password không được để trống');
+    } else if(!minlength(inputSelector)) {
+        showError(inputSelector, `password tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
+    } else {
+        showSuccess(inputSelector);
+    }
+}
+function validateConfirmPassword(inputSelector) {
+    if(!require(inputSelector)) {
+        showError(inputSelector, 'confirm password không được để trống');
+    } else if(!minlength(inputSelector)) {
+        showError(inputSelector, `confirm password tối thiểu ${inputSelector.getAttribute('min_length')} kí tự`);
+    } else if(!comparePass(inputSelector)) {
+        showError(inputSelector, 'confirm password không trùng với password');
+    } else {
+        showSuccess(inputSelector);
+    }
+}
+// =============== End Validate Input Function ===============
+
+
+// =============== Start Rules Function ===============
 function require(inputSelector) {
     return inputSelector.value ? true : false;
 }
@@ -93,8 +120,11 @@ function comparePass(inputSelector) {
     return valueConfirmPass === valuePassword;
 
 }
+// =============== End Rules Function ===============
 
 
+
+// =============== Start Messages Function ===============
 function showError(inputSelector, message = null) {
     // 1. Hiển thị mầu đỏ cho ô input
     inputSelector.classList.add('error');
@@ -108,11 +138,10 @@ function showSuccess(inputSelector) {
     inputSelector.classList.remove('error');
     divMessageSelector.textContent = '';
 }
+// =============== End Messages Function ===============
 
-// hàm chỉ chạy khi người dùng nhập value có sự thay đổi
-function handleChangeValue(event) {
-    console.log(event.target);
-}
+
+
 
 
 
