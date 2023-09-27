@@ -107,7 +107,7 @@ function validateConfirmPassword(inputSelector) {
         showError(inputSelector, 'confirm password không trùng với password');
     } else {
         showSuccess(inputSelector);
-        isValid = false;
+        isValid = true;
     }
     return isValid;
 }
@@ -171,6 +171,6 @@ btnSignUpSelector.addEventListener('click', handleSignUpClick);
 // Thêm sự kiện input cho các ô input nhập liệu
 for(let i = 0; i < inputAllSelector.length; i++) {
     let inputElement = inputAllSelector[i];
-    inputElement.addEventListener('input', handleChangeValue);
+    inputElement.addEventListener('blur', handleChangeValue);
 }
 
