@@ -109,9 +109,20 @@ function showSuccess(inputSelector) {
     divMessageSelector.textContent = '';
 }
 
+// hàm chỉ chạy khi người dùng nhập value có sự thay đổi
+function handleChangeValue(event) {
+    console.log(event.target);
+}
+
 
 
 
 
 // 3. Thêm sự kiện cho phần tử
 btnSignUpSelector.addEventListener('click', handleSignUpClick);
+// Thêm sự kiện input cho các ô input nhập liệu
+for(let i = 0; i < inputAllSelector.length; i++) {
+    let inputElement = inputAllSelector[i];
+    inputElement.addEventListener('input', handleChangeValue);
+}
+
