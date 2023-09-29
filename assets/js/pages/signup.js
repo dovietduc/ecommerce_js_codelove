@@ -45,22 +45,43 @@ const methodsRule = {
     }
 }
 
+const messages = {
+    name_required: 'Tên không được để trống',
+    email_required: 'Email không được để trống'
+}
+
 // =============== Start Listener Function ===============
 function handleSignUpClick(event) {
     event.preventDefault();
     // loop qua từng phần tử input validate
     for(const keyNameInput in rules) {
+        console.group();
+
         let inputElement = document.querySelector('.' + keyNameInput);
         let valueInput = inputElement.value;
         console.log(inputElement);
+
+        // reset all error
+        inputElement.classList.remove('error');
+        inputElement.nextElementSibling.textContent = '';
 
         let ruleAllForInput = rules[keyNameInput];
         // loop qua từng rule validate của input đấy
         for(const ruleItemKey in ruleAllForInput) {
             let paramsInput = ruleAllForInput[ruleItemKey];
             let result = methodsRule[ruleItemKey](valueInput, paramsInput);
+            let keyMessage = keyNameInput + '_' + ruleItemKey;
+            console.log(messages[keyMessage]);
             console.log('result', result);
+
+            // kiểm tra validate rule thất bại
+            if(!result) {
+                inputElement.classList.add('error');
+                inputElement.nextElementSibling.textContent = messages[keyMessage] ? messages[keyMessage] : keyNameInput + ' not valid';
+                break;
+            }
         }
+        console.groupEnd();
     }
 
 }
