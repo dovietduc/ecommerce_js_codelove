@@ -24,10 +24,38 @@ const rules = {
     }
 }
 
+const methodsRule = {
+    required: function(valueInput, paramsInput) {
+        console.log('require running');
+    },
+    minlength: function(valueInput, paramsInput) {
+        console.log('minlength running');
+    },
+    email: function(valueInput, paramsInput) {
+        console.log('email running');
+    },
+    equal_to: function(valueInput, paramsInput) {
+        console.log('equal_to running');
+    }
+}
+
 // =============== Start Listener Function ===============
 function handleSignUpClick(event) {
     event.preventDefault();
-    
+    // loop qua từng phần tử input validate
+    for(const keyNameInput in rules) {
+        let inputElement = document.querySelector('.' + keyNameInput);
+        let valueInput = inputElement.value;
+        console.log(inputElement);
+
+        let ruleAllForInput = rules[keyNameInput];
+        // loop qua từng rule validate của input đấy
+        for(const ruleItemKey in ruleAllForInput) {
+            let paramsInput = ruleAllForInput[ruleItemKey];
+            methodsRule[ruleItemKey](valueInput, paramsInput);
+        }
+    }
+
 }
 
 
