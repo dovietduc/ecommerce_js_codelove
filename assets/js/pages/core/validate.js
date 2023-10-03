@@ -1,14 +1,25 @@
 function Validate(options) {
-
     // 1. Lấy ra container bao đóng form
     const container = document.querySelector(options.container);
     // 2. Tất cả các elements khác query dựa vào container
     const btnSignUpSelector = container.querySelector('.btn-signup');
     const rules = options.rules;
     const messages = options.messages;
-    console.log(rules, messages);
 
-
+    const rulesMethod = {
+        required: function(valueInput, valueRule) {
+            console.log('valueRule', valueRule);
+        },
+        minlength: function(valueInput, valueRule) {
+            console.log('valueRule', valueRule);
+        },
+        email: function(valueInput, valueRule) {
+            console.log('valueRule', valueRule);
+        },
+        equal_to: function(valueInput, valueRule) {
+            console.log('valueRule', valueRule);
+        }
+    }
 
     function initEventAndData() {
         btnSignUpSelector.addEventListener('click', handleSignUpClick);
@@ -16,6 +27,25 @@ function Validate(options) {
 
     function handleSignUpClick(event) {
         event.preventDefault();
+        for(const keyInputName in rules) {
+
+            let inputSelector = container.querySelector('.' + keyInputName);
+            let valueInput = inputSelector.value;
+            console.log('valueInput', valueInput);
+            console.log('keyInputName', keyInputName);
+            console.log('rules for item input', rules[keyInputName]);
+
+            ruleAllForInputItem = rules[keyInputName];
+
+            for(const ruleItemKey in ruleAllForInputItem) {
+                let valueRule = ruleAllForInputItem[ruleItemKey];
+                rulesMethod[ruleItemKey](valueInput, valueRule);
+             
+            }
+
+
+
+        }
     }
 
 
