@@ -36,8 +36,9 @@ function Validate(options) {
 
             let inputSelector = container.querySelector('.' + keyInputName);
             let valueInput = inputSelector.value;
-
             ruleAllForInputItem = rules[keyInputName];
+            // reset all errors
+            resetErrors(inputSelector);
 
             for(const ruleItemKey in ruleAllForInputItem) {
                 let valueRule = ruleAllForInputItem[ruleItemKey];
@@ -52,21 +53,27 @@ function Validate(options) {
                     break;
                 }
             }
-
         }
         
         // Hiển thị lỗi
+        if(errors.length) {
+            showErrors();
+        }
+    }
+
+    function resetErrors(inputSelector) {
+        inputSelector.classList.remove('error');
+        inputSelector.nextElementSibling.textContent = '';
+    }
+
+    function showErrors() {
         errors.forEach(function(element) {
             let inputElement = element.elementError;
             let divError = inputElement.nextElementSibling;
             inputElement.classList.add('error');
             divError.textContent = element.message;
         });
-
-
     }
-
-
 
     
 
