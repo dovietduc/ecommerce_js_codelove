@@ -8,7 +8,7 @@ let signupInstanceValidate = new Validate(
             email: {
                 required: true,
                 minlength: 3,
-                email: true
+                regex: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
             },
             password: {
                 required: true,
@@ -22,7 +22,8 @@ let signupInstanceValidate = new Validate(
         },
         messages: {
             name_required: 'Tên không được để trống',
-            email_required: 'Email không được để trống'
+            email_required: 'Email không được để trống',
+            email_regex: 'Email không đúng định dạng'
         }
     }
 );
