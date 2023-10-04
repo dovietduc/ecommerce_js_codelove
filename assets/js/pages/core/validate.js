@@ -39,16 +39,16 @@ function Validate(options) {
         errors = [];
         for(const keyInputName in rules) {
 
-            let inputSelector = container.querySelector('.' + keyInputName);
-            let valueInput = inputSelector.value;
-            ruleAllForInputItem = rules[keyInputName];
+            const inputSelector = container.querySelector('.' + keyInputName);
+            const valueInput = inputSelector.value;
+            const ruleAllForInputItem = rules[keyInputName];
             // reset all errors
             resetErrors(inputSelector);
 
             for(const ruleItemKey in ruleAllForInputItem) {
-                let valueRule = ruleAllForInputItem[ruleItemKey];
-                let result = rulesMethod[ruleItemKey](valueInput, valueRule);
-                let keyMessage = keyInputName + '_' + ruleItemKey;
+                const valueRule = ruleAllForInputItem[ruleItemKey];
+                const result = rulesMethod[ruleItemKey](valueInput, valueRule);
+                const keyMessage = keyInputName + '_' + ruleItemKey;
                 if(!result) {
                     // đẩy lỗi vào biến đang lưu trữ
                     errors.push({
