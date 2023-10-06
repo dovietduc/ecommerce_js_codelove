@@ -36,41 +36,69 @@ function Validate(options) {
     }
 
     function initEventAndData() {
+        // sự kiện nhấn button submit form
         btnSignUpSelector.addEventListener('click', handleSignUpClick);
+        // Sự kiện input khi thay đổi value cho element
+        container.querySelectorAll(`.${formGroupClass} input`).forEach(function(element) {
+            element.addEventListener('input', handleInputChange);
+        });
+    }
+
+    function handleInputChange(event) {
+        errors = errors || [];
+        const inputSelector = event.target;
+        // xóa bỏ lỗi element input ra khỏi mảng lỗi
+        errors = errors.filter(function(element) {
+            return element.elementError.name !== inputSelector.name;
+        });
+        // Thêm lỗi vào nếu element có lỗi
+        validateOneElement(inputSelector);
+        // reset errors
+        resetErrors(inputSelector);
+        // Hiển thị lỗi
+        if(errors.length) {
+            showErrors();
+        }
+    }
+
+    function validateOneElement(element) {
+        const valueInput = element.value;
+        const keyInputName = element.name;
+        const ruleAllForInputItem = rules[keyInputName];
+
+        for(const ruleItemKey in ruleAllForInputItem) {
+            const valueRule = ruleAllForInputItem[ruleItemKey];
+            const result = rulesMethod[ruleItemKey](valueInput, valueRule);
+            const keyMessage = keyInputName + '_' + ruleItemKey;
+            if(!result) {
+                // đẩy lỗi vào biến đang lưu trữ
+                let messageErrorDefault = messageDefault[ruleItemKey];
+                messageErrorDefault = messageErrorDefault.replace('{min}', valueRule);
+                errors.push({
+                    elementError: element,
+                    message: messages[keyMessage] ? messages[keyMessage] : messageErrorDefault
+                });
+                break;
+            }
+        }
     }
 
     function handleSignUpClick(event) {
         event.preventDefault();
         errors = [];
         for(const keyInputName in rules) {
-
             const inputSelector = container.querySelector('.' + keyInputName);
-            const valueInput = inputSelector.value;
-            const ruleAllForInputItem = rules[keyInputName];
             // reset all errors
             resetErrors(inputSelector);
-
-            for(const ruleItemKey in ruleAllForInputItem) {
-                const valueRule = ruleAllForInputItem[ruleItemKey];
-                const result = rulesMethod[ruleItemKey](valueInput, valueRule);
-                const keyMessage = keyInputName + '_' + ruleItemKey;
-                if(!result) {
-                    // đẩy lỗi vào biến đang lưu trữ
-                    let messageErrorDefault = messageDefault[ruleItemKey];
-                    messageErrorDefault = messageErrorDefault.replace('{min}', valueRule);
-                    errors.push({
-                        elementError: inputSelector,
-                        message: messages[keyMessage] ? messages[keyMessage] : messageErrorDefault
-                    });
-                    break;
-                }
-            }
+            // check validate passed for one element input
+            validateOneElement(inputSelector);
         }
         
         // Hiển thị lỗi
         if(errors.length) {
             showErrors();
         }
+        console.log(errors);
     }
 
     function resetErrors(inputSelector) {
