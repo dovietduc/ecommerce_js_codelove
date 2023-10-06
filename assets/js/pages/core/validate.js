@@ -56,9 +56,7 @@ function Validate(options) {
         // reset errors
         resetErrors(inputSelector);
         // Hiển thị lỗi
-        if(errors.length) {
-            showErrors();
-        }
+        showErrors();
     }
 
     function validateOneElement(element) {
@@ -78,7 +76,7 @@ function Validate(options) {
                     elementError: element,
                     message: messages[keyMessage] ? messages[keyMessage] : messageErrorDefault
                 });
-                break;
+                return false;
             }
         }
     }
@@ -95,10 +93,7 @@ function Validate(options) {
         }
         
         // Hiển thị lỗi
-        if(errors.length) {
-            showErrors();
-        }
-        console.log(errors);
+        showErrors();
     }
 
     function resetErrors(inputSelector) {
@@ -108,13 +103,16 @@ function Validate(options) {
     }
 
     function showErrors() {
-        errors.forEach(function(element) {
-            let inputElement = element.elementError;
-            let divError = inputElement.closest(`.${formGroupClass}`).querySelector(`.${errorMessageClass}`);
-
-            inputElement.classList.add(errorClass);
-            divError.textContent = element.message;
-        });
+        if(errors.length) {
+            errors.forEach(function(element) {
+                let inputElement = element.elementError;
+                let divError = inputElement.closest(`.${formGroupClass}`).querySelector(`.${errorMessageClass}`);
+    
+                inputElement.classList.add(errorClass);
+                divError.textContent = element.message;
+            });
+        }
+        
     }
 
     
