@@ -1,99 +1,87 @@
-// 1. chọn element
-const btnSignUpSelector = document.querySelector('.btn-signup');
-const inputAllSelector = document.querySelectorAll('.form-group input');
-const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const formRegister = document.querySelector('.form_register');
+const togglePass = formRegister.querySelector('.toogle_password');
 
-// input
-const rules = {
-    name: {
-        required: true
-    },
-    email: {
-        required: true,
-        minlength: 3,
-        email: true
-    },
-    password: {
-        required: true,
-        minlength: 8 
-    },
-    confirm_password: {
-        required: true,
-        minlength: 8,
-        equal_to: 'password'
-    }
-}
-
-const methodsRule = {
-    required: (valueInput, paramsInput) => {
-        return valueInput !== '';
-    },
-    minlength: function(valueInput, paramsInput) {
-        return valueInput.length >= paramsInput;
-    },
-    email: function(valueInput, paramsInput) {
-        return regexEmail.test(valueInput);
-    },
-    equal_to: function(valueInput, paramsInput) {
-        let passSelector = document.querySelector('.' + paramsInput);
-        let valuePass = passSelector.value;
-        return valuePass === valueInput;
-    }
-}
-
-const messages = {
-    name_required: 'Tên không được để trống',
-    email_required: 'Email không được để trống'
-}
-
-// =============== Start Listener Function ===============
-function handleSignUpClick(event) {
-    event.preventDefault();
-    // loop qua từng phần tử input validate
-    for(const keyNameInput in rules) {
-
-        let inputElement = document.querySelector('.' + keyNameInput);
-        let valueInput = inputElement.value;
-
-        // reset all error
-        resetAllError(inputElement);
-
-        let ruleAllForInput = rules[keyNameInput];
-        // loop qua từng rule validate của input đấy
-        for(const ruleItemKey in ruleAllForInput) {
-            // lấy ra value của object item rule
-            let paramsInput = ruleAllForInput[ruleItemKey];
-            // kết quả validate từng rule trả về
-            let result = methodsRule[ruleItemKey](valueInput, paramsInput);
-            let keyMessage = keyNameInput + '_' + ruleItemKey;
-
-            // kiểm tra validate rule thất bại
-            if(!result) {
-                showMessageError(inputElement, keyMessage, keyNameInput);
-                break;
-            }
+function rules() {
+    return {
+        name: {
+            required: true
+        },
+        email: {
+            required: true,
+            minlength: 3,
+            regex: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        },
+        password: {
+            required: true,
+            minlength: 8
+        },
+        confirm_password: {
+            required: true,
+            minlength: 8,
+            equal_to: 'password'
         }
+    };
+}
+
+function messages() {
+    return {
+        name_required: 'Tên không được để trống',
+        email_required: 'Email không được để trống',
+        email_regex: 'Email không đúng định dạng'
+    };
+}
+
+function validateSuccess() {
+    // 1. Lấy dữ liệu input
+    let dataForm = {};
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    // check email is exit
+    const email = formRegister.querySelector('.email').value;
+    let isEmailExit = users.some(
+        function (element) {
+            return element.email === email;
+        }
+    )
+
+    // Nếu email chưa tồn tại thì mới thêm thông tin user vào local
+    if (!isEmailExit) {
+        formRegister.querySelectorAll('input').forEach(function (element) {
+            if (element.name !== 'confirm_password') {
+                dataForm[element.name] = element.value;
+            }
+        });
+        // 2.1 Create data users array
+        dataForm['id'] = crypto.randomUUID();
+        dataForm['status'] = '';
+
+        users.push(dataForm);
+        // 2.2 Save to localStorage
+        localStorage.setItem('users', JSON.stringify(users));
+        // 3. redirect to page login
+        window.location.href = '/login.html';
     }
+}
+function handleTogglePass(event) {
+    const clicked = event.target;
+    const inputChangeType = clicked.closest('.form-group').querySelector('.password');
+    const type = inputChangeType.getAttribute('type') === 'password' ? 'text' : 'password';
 
+    inputChangeType.setAttribute('type', type);
+    clicked.classList.toggle('fa-eye-slash');
+    clicked.classList.toggle('fa-eye');
+  
 }
 
-function showMessageError(inputElement, keyMessage, keyNameInput) {
-    let message = keyNameInput + ' not valid';
-    inputElement.classList.add('error');
-    if(messages[keyMessage]) {
-        message = messages[keyMessage];
+
+
+
+togglePass.addEventListener('click', handleTogglePass);
+// config validate form
+let signupInstanceValidate = new Validate(
+    {
+        container: ".form_register",
+        rules: rules(),
+        messages: messages(),
+        success: validateSuccess
     }
-    inputElement.nextElementSibling.textContent = message;
-}
-
-function resetAllError(inputElement) {
-    inputElement.classList.remove('error');
-    inputElement.nextElementSibling.textContent = '';
-}
-
-
-
-// 3. Thêm sự kiện cho phần tử
-btnSignUpSelector.addEventListener('click', handleSignUpClick);
-
-
+);
