@@ -28,17 +28,18 @@ function validateSuccess() {
     // 2. so sánh email và pass với tất cả users trong hệ thống
     const users = JSON.parse(localStorage.getItem('users')) || [];
     if(users.length) {
-        users.forEach(
+
+        const usersUpdate = users.map(
             function(element) {
                 if(element.email === email && element.password === password) {
-                    element.status = 'active'
+                    return {...element, status: 'active'};
                 } else {
-                    element.status = ''
+                    return {...element, status: ''};
                 }
             }
         );
         // 3. cập nhật vào local storage
-        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('users', JSON.stringify(usersUpdate));
         // 4. chuyển đến màn hình admin hoặc home
         window.location.href = '/my-account.html';
     }
