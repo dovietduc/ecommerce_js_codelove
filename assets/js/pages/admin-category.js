@@ -1,6 +1,6 @@
 function showDataCateFromLocal() {
     // 1. Lấy toàn bộ danh mục trong local
-    const categories = JSON.parse(localStorage.getItem('categories'));
+    const categories = JSON.parse(localStorage.getItem('categories')) || [];
     // 2. Xây dựng cấu trúc html cho danh mục
     let htmlResult = '';
     categories.forEach(function(element) {
@@ -8,7 +8,7 @@ function showDataCateFromLocal() {
                         <td>${element.name}</td>
                         <td>
                             <button class="btn_common btn_edit">Edit</button>
-                            <button class="btn_common btn_delete">Delete</button>
+                            <button data-id="${element.id}" class="btn_common btn_delete">Delete</button>
                         </td>
                     </tr>`;
 
@@ -28,12 +28,36 @@ function validateSuccess() {
     };
     // 3. Đưa object vào trong mảng category
     const categories = JSON.parse(localStorage.getItem('categories')) || [];
-    const categoriesUpdate = [...categories, newCate];
+    const categoriesUpdate = [newCate, ...categories];
     // 4. Lưu vào trong local
     localStorage.setItem('categories', JSON.stringify(categoriesUpdate));
     // 5. Hiển thị dữ liệu ngay lập tức khi thêm thành công
     showDataCateFromLocal();
 };
+
+function handleProcessData(event) {
+    const clicked = event.target;
+    // lấy ra tất cả danh mục troing local
+    const categories = JSON.parse(localStorage.getItem('categories')) || [];
+    if(clicked.classList.contains('btn_delete') && confirm('Bạn chắc chắn muốn delete')) {
+
+        const idDelete = clicked.getAttribute('data-id');
+        // mảng lọc ra phần tử cần delete
+        const categoriesFilter = categories.filter(
+            function(element) {
+                return element.id !== idDelete;
+            }
+        );
+
+        // lưu vào localStorage
+        localStorage.setItem('categories', JSON.stringify(categoriesFilter));
+        // 5. Hiển thị dữ liệu ngay lập tức khi thêm thành công -- Rerende app
+        showDataCateFromLocal();
+        
+    }
+}
+
+
 
 
 // Hiển thị dữ liệu category từ local
@@ -53,3 +77,4 @@ let validateCategory = new Validate(
         success: validateSuccess
     }
 );
+document.querySelector('.category_table').addEventListener('click', handleProcessData);
