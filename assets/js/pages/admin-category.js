@@ -23,6 +23,48 @@ function showDataCateFromLocal() {
 }
 
 function validateSuccess() {
+
+    if(buttonSave.classList.contains('update')) {
+        updateCategory();
+    } else {
+        addCategory();
+    }
+   
+};
+
+function updateCategory() {
+    // 1. Lấy ra thông tin của danh mục
+    const nameCategory = categoryInputName.value;
+    // 2. Tao ra du lieu update
+    // 2.1 lay ra id update
+    const categories = JSON.parse(localStorage.getItem('categories')) || [];
+    const idUpdate = buttonSave.getAttribute('data-id');
+    const categoriesUpdate = categories.map(
+        function(element) {
+            if(element.id === idUpdate) {
+                return {
+                    id: element.id,
+                    name: nameCategory
+                };
+            } else {
+                return element;
+            }
+        }
+    );
+    // 3. luu vao local storage
+    localStorage.setItem('categories', JSON.stringify(categoriesUpdate));
+    // 4. Hiển thị dữ liệu ngay lập tức khi thêm thành công
+    showDataCateFromLocal();
+    // 5. reset form
+    categoryInputName.value = '';
+    // 6. reset form den trang thai add category
+    buttonSave.textContent = 'Save';
+    buttonSave.removeAttribute('data-id');
+    buttonSave.classList.remove('update');
+}
+
+
+function addCategory() {
     // 1. Lấy ra thông tin của danh mục
     const nameCategory = categoryInputName.value;
     // 2. Tạo ra object chứa thông tin danh mục
@@ -37,7 +79,9 @@ function validateSuccess() {
     localStorage.setItem('categories', JSON.stringify(categoriesUpdate));
     // 5. Hiển thị dữ liệu ngay lập tức khi thêm thành công
     showDataCateFromLocal();
-};
+    // 6. reset form
+    categoryInputName.value = '';
+}
 
 function handleProcessData(event) {
     const clicked = event.target;
