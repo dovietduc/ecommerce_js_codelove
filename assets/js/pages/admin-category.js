@@ -55,7 +55,11 @@ function updateCategory() {
     localStorage.setItem('categories', JSON.stringify(categoriesUpdate));
     // 4. Hiển thị dữ liệu ngay lập tức khi thêm thành công
     showDataCateFromLocal();
-    // 5. reset form
+    // 5. reset form to add category
+    resetToAddCategory();
+}
+
+function resetToAddCategory() {
     categoryInputName.value = '';
     // 6. reset form den trang thai add category
     buttonSave.textContent = 'Save';
@@ -103,6 +107,10 @@ function handleProcessData(event) {
         localStorage.setItem('categories', JSON.stringify(categoriesFilter));
         // 5. Hiển thị dữ liệu ngay lập tức khi thêm thành công -- Rerende app
         showDataCateFromLocal();
+        // 6. Kiểm tra nếu id xóa trùng với update thì reset to status add cate
+        if(idDelete === buttonSave.getAttribute('data-id')) {
+            resetToAddCategory();
+        }
         
     }
     // Khi người dùng click vào button edit
