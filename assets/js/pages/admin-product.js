@@ -1,4 +1,5 @@
 const selectCate = document.querySelector('.category_wrapper_form');
+const formProduct = document.querySelector('#form_save_product');
 function showCategoryInProduct() {
     // 1. Lay toan bo danh muc trong local
     const cateAll = JSON.parse(localStorage.getItem('categories')) || [];
@@ -15,7 +16,29 @@ function showCategoryInProduct() {
 }
 
 function validateProductSuccess() {
-    console.log('validate sucess');
+    // 1. Lay ra value cua input và tạo ra object chứa thông tin sản phẩm
+    let objValue = {};
+    const inputAll = formProduct.querySelectorAll('.form-control-item');
+    inputAll.forEach(
+        function(element) {
+            if(element.name === 'category_wrapper_form') {
+                objValue['category_id'] = element.value;
+            } else {
+                objValue[element.name] = element.value;
+            }
+        }
+    );
+    objValue.id = crypto.randomUUID();
+    const productType = document.querySelector('.type_product:checked').value;
+    objValue.product_type = productType;
+
+    // 2 đưa object vào trong mảng
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    const productsNew = [objValue, ...products];
+
+    // 3. lưu dữ liệu vào local storage
+    localStorage.setItem('products', JSON.stringify(productsNew));
+    
 }
 
 
