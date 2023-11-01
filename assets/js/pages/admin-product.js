@@ -1,5 +1,6 @@
 const selectCate = document.querySelector('.category_wrapper_form');
 const formProduct = document.querySelector('#form_save_product');
+const tbodyProduct = document.querySelector('.product_table');
 function showCategoryInProduct() {
     // 1. Lay toan bo danh muc trong local
     const cateAll = JSON.parse(localStorage.getItem('categories')) || [];
@@ -57,12 +58,35 @@ function showProductsInLocal() {
                     </td>
                     <td>
                         <button class="btn_common btn_edit">Edit</button>
-                        <button class="btn_common btn_delete">Delete</button>
+                        <button class="btn_common btn_delete" data-id="${element.id}">Delete</button>
                     </td>
             </tr>`;
         }
     );
-    document.querySelector('.product_table').innerHTML = htmlResult;
+    tbodyProduct.innerHTML = htmlResult;
+
+}
+
+function handleProcessProduct(event) {
+    const clicked = event.target;
+
+    // Kiểm tra nếu click vào button delete mới xử lí xóa
+    if(clicked.classList.contains('btn_delete') && confirm('Ban chac chan muon xoa?')) {
+        // 1. Lấy ra id của object cần xóa
+        const idDelete = clicked.getAttribute('data-id');
+        // 2. xóa object có chứa idDelete
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const productsFilter = products.filter(
+            function(element) {
+                return element.id !== idDelete;
+            }
+        );
+        // 3. luu du lieu vao local storage
+        localStorage.setItem('products', JSON.stringify(productsFilter));
+        // 4. Hien thi du lieu lai ngay lap tuc
+        showProductsInLocal();
+
+    }
 
 }
 
@@ -100,3 +124,5 @@ let validateProduct = new Validate(
         success: validateProductSuccess
     }
 );
+// them su kien xoa va edit cho san pham
+tbodyProduct.addEventListener('click', handleProcessProduct);
