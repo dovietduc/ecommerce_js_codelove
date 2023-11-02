@@ -57,7 +57,7 @@ function showProductsInLocal() {
                         <img src="${element.image}" alt=""/>
                     </td>
                     <td>
-                        <button class="btn_common btn_edit">Edit</button>
+                        <button class="btn_common btn_edit" data-id="${element.id}">Edit</button>
                         <button class="btn_common btn_delete" data-id="${element.id}">Delete</button>
                     </td>
             </tr>`;
@@ -85,6 +85,29 @@ function handleProcessProduct(event) {
         localStorage.setItem('products', JSON.stringify(productsFilter));
         // 4. Hien thi du lieu lai ngay lap tuc
         showProductsInLocal();
+
+    } else if(clicked.classList.contains('btn_edit')) {
+        // 1. Lay ra id Edit
+        const idEdit = clicked.getAttribute('data-id');
+        // 2. Lay ra object co chua id edit
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const elementEditting = products.find(
+            function(element) {
+                return element.id === idEdit;
+            }
+        );
+        // 3. Đưa dữ liệu object edit lấy được vào trong form
+        const inputAll = formProduct.querySelectorAll('.form-control-item');
+
+        // dua value vao input tru radio
+        inputAll.forEach(
+            function(element) {
+                const keyName = element.name === 'category_wrapper_form' ? 'category_id' : element.name;
+                element.value = elementEditting[keyName];
+            }
+        );
+        // dua value vao radio box
+        document.querySelector(`.type_product[value="${elementEditting.product_type}"]`).checked = true;
 
     }
 
