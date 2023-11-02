@@ -1,6 +1,7 @@
 const selectCate = document.querySelector('.category_wrapper_form');
 const formProduct = document.querySelector('#form_save_product');
 const tbodyProduct = document.querySelector('.product_table');
+const btnSaveProduct = document.querySelector('.btn_save');
 function showCategoryInProduct() {
     // 1. Lay toan bo danh muc trong local
     const cateAll = JSON.parse(localStorage.getItem('categories')) || [];
@@ -16,7 +17,52 @@ function showCategoryInProduct() {
 
 }
 
+function handleUpdateProduct() {
+    const idUpdate = btnSaveProduct.getAttribute('data-id');
+    // 1. Tạo ra object cho idEdit
+    let objValue = {};
+    const inputAll = formProduct.querySelectorAll('.form-control-item');
+    inputAll.forEach(
+        function(element) {
+            if(element.name === 'category_wrapper_form') {
+                objValue['category_id'] = element.value;
+            } else {
+                objValue[element.name] = element.value;
+            }
+        }
+    );
+    objValue.id = idUpdate;
+    const productType = document.querySelector('.type_product:checked').value;
+    objValue.product_type = productType;
+
+    // 2. Tạo ra mảng chứa object cần edit và các object khác
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const productsUpdate = products.map(
+        function(element) {
+            if(element.id === idUpdate) {
+                return objValue;
+            } else {
+                return element;
+            }
+        }
+    );
+    
+    // 3. lưu dữ liệu vào local storage
+    localStorage.setItem('products', JSON.stringify(productsUpdate));
+
+    // 4. Hiển thị dữ liệu từ trong local
+    showProductsInLocal();
+
+
+}
+
 function validateProductSuccess() {
+
+    if(btnSaveProduct.classList.contains('update')) {
+        handleUpdateProduct();
+        return;
+    }
+
     // 1. Lay ra value cua input và tạo ra object chứa thông tin sản phẩm
     let objValue = {};
     const inputAll = formProduct.querySelectorAll('.form-control-item');
@@ -42,6 +88,11 @@ function validateProductSuccess() {
 
     // 4. Hiển thị dữ liệu từ trong local
     showProductsInLocal();
+
+    // 5. reset den trang thai them moi san pham
+    btnSaveProduct.textContent = 'Save';
+    btnSaveProduct.classList.remove('update');
+    btnSaveProduct.removeAttribute('data-id');
     
 }
 
@@ -108,6 +159,12 @@ function handleProcessProduct(event) {
         );
         // dua value vao radio box
         document.querySelector(`.type_product[value="${elementEditting.product_type}"]`).checked = true;
+
+        // 4. Phân biệt trạng thái create hay update cho button save
+        btnSaveProduct.textContent = 'Update';
+        btnSaveProduct.classList.add('update');
+        btnSaveProduct.setAttribute('data-id', idEdit);
+
 
     }
 
